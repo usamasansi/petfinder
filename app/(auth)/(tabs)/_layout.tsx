@@ -5,15 +5,16 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useAuthStore } from "@/store/authStore";
-import { useCheckAuthenticated } from "@/hooks/useCheckAuthenticated";
+import { useCheckAuthentication } from "@/hooks/useCheckAuthentication";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  const { authenticated } = useAuthStore((state) => state.authState);
+  const { authenticated, userId } = useAuthStore((state) => state.authState);
+  console.log("🚀 ~ TabLayout ~ userId:", userId);
   console.log("🚀 ~ TabLayout ~ authenticated:", authenticated);
 
-  useCheckAuthenticated(authenticated);
+  useCheckAuthentication(authenticated);
 
   return (
     <Tabs

@@ -4,17 +4,16 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-
 import { useColorScheme } from "@/hooks/useColorScheme";
-import {
-  Material3ThemeProvider,
-  useAppTheme,
-} from "@/lib/theme/Material3ThemeProvider";
-import { adaptNavigationTheme } from "react-native-paper";
+import { Material3ThemeProvider } from "@/lib/theme/Material3ThemeProvider";
+import { useCheckLocalization } from "@/hooks/useCheckLocalization";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -43,30 +42,34 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+  useCheckLocalization();
+
   if (!loaded) {
     return null;
   }
 
-  // const { LightTheme, DarkTheme: MyDarkTheme } = adaptNavigationTheme({
-  //   reactNavigationLight: DefaultTheme,
-  //   reactNavigationDark: DarkTheme,
-  // });
-
   return (
-    <Material3ThemeProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(public)/login"
-            options={{
-              headerShown: true,
-              title: "Login",
-            }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </ThemeProvider>
-    </Material3ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <Material3ThemeProvider>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen
+              name="(auth)/(tabs)"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(public)/login"
+              options={{
+                headerShown: true,
+                title: "Login",
+              }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </ThemeProvider>
+      </Material3ThemeProvider>
+    </QueryClientProvider>
   );
 }

@@ -1,0 +1,15 @@
+{
+  "appName": "LostPetFinder",
+  "yes": "Yes",
+  "no": "No",
+  "back": "Back",
+  "login": "Login",
+  "email": "Email",
+  "password": "Password",
+  "forgotPassword": "Forgot Password?",
+  "signUp": "Sign Up",
+  "confirmPassword": "Confirm Password",
+  "createAccount": "Create Account",
+  "emailValidationMessage": "Invalid email address format",
+  "passwordValidationMin8Message": "Password must contain a minimum of 8 characters"
+}

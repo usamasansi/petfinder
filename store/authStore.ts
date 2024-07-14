@@ -5,13 +5,17 @@ type AuthState = {
     authenticated: boolean | null;
     userId: number | null;
   };
-  onLogin: (username: string, password: string) => void;
+  setAuthenticatedUser: (authenticated: boolean, userId: number) => void;
   onLogout: () => void;
 };
 
 export const useAuthStore = create<AuthState>()((set) => ({
   authState: { authenticated: null, userId: null },
-  onLogin: (username: string, password: string) => {},
+  setAuthenticatedUser: (authenticated: boolean, userId: number) => {
+    set(() => ({
+      authState: { authenticated, userId },
+    }));
+  },
   onLogout: () =>
     set((state) => ({
       authState: { ...state.authState, authenticated: false, username: null },
