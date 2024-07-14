@@ -19,9 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
 import { isErrorsObjectEmpty } from "@/validation/helpers";
 import { LoginFormData, LoginSchema } from "@/validation/login";
-
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+import { blurhash } from "@/lib/utils";
 
 export default function Login() {
   const { authenticated } = useAuthStore((state) => state.authState);
