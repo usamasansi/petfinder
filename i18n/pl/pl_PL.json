@@ -9,5 +9,7 @@
   "forgotPassword": "Zapomniałeś hasła?",
   "signUp": "Zarejestruj się",
   "confirmPassword": "Potwierdź hasło",
-  "createAccount": "Stwórz konto"
+  "createAccount": "Stwórz konto",
+  "emailValidationMessage": "Nieprawidłowy format adresu email",
+  "passwordValidationMin8Message": "Hasło musi zawierać minimalnie 8 znaków"
 }

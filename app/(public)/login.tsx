@@ -15,21 +15,13 @@ import { Images } from "@/assets/images";
 import { Keyboard } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
+import { isErrorsObjectEmpty } from "@/validation/helpers";
+import { LoginFormData, LoginSchema } from "@/validation/login";
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
-type FormData = {
-  email: string;
-  password: string;
-};
-
-const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
 
 export default function Login() {
   const { authenticated } = useAuthStore((state) => state.authState);
@@ -42,16 +34,18 @@ export default function Login() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<LoginFormData>({
     defaultValues: {
       email: "",
       password: "",
     },
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(LoginSchema(t)),
   });
-  const onSubmit = (data: FormData) => console.log(data);
+  const onSubmit = (data: LoginFormData) => console.log(data);
 
   console.log("🚀 ~ Login ~ errors:", errors);
+
+  const theme = useAppTheme();
 
   return (
     <Container withHeader>
@@ -150,7 +144,21 @@ export default function Login() {
               exiting={FadeOut.duration(850)}
               style={{ marginBottom: 10, alignSelf: "center" }}
             >
-              <Button mode="outlined" onPress={handleSubmit(onSubmit)}>
+              <Button
+                mode="outlined"
+                onPress={handleSubmit(onSubmit)}
+                buttonColor={
+                  isErrorsObjectEmpty(errors) ? undefined : theme.colors.error
+                }
+                textColor={
+                  isErrorsObjectEmpty(errors) ? undefined : theme.colors.onError
+                }
+                style={{
+                  borderColor: isErrorsObjectEmpty(errors)
+                    ? theme.colors.outline
+                    : theme.colors.onError,
+                }}
+              >
                 {t("login")}
               </Button>
             </Animated.View>
