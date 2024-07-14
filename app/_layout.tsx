@@ -11,6 +11,9 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Material3ThemeProvider } from "@/lib/theme/Material3ThemeProvider";
 import { useCheckLocalization } from "@/hooks/useCheckLocalization";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -46,20 +49,27 @@ export default function RootLayout() {
   }
 
   return (
-    <Material3ThemeProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(public)/login"
-            options={{
-              headerShown: true,
-              title: "Login",
-            }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </ThemeProvider>
-    </Material3ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <Material3ThemeProvider>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen
+              name="(auth)/(tabs)"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(public)/login"
+              options={{
+                headerShown: true,
+                title: "Login",
+              }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </ThemeProvider>
+      </Material3ThemeProvider>
+    </QueryClientProvider>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useCheckAuthentication } from "@/hooks/useCheckAuthentication";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
@@ -20,12 +20,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
 import { isErrorsObjectEmpty } from "@/validation/helpers";
 import { LoginFormData, LoginSchema } from "@/validation/login";
-import { blurhash } from "@/lib/utils";
+import { blurhash, saveItemInSecureStore } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
-  const { authenticated } = useAuthStore((state) => state.authState);
-
+  const { authenticated, userId } = useAuthStore((state) => state.authState);
+  console.log("🚀 ~ Login ~ userId:", userId);
+  console.log("🚀 ~ Login ~ authenticated:", authenticated);
   useCheckAuthentication(authenticated);
+
+  const setAuthenticatedUser = useAuthStore(
+    (state) => state.setAuthenticatedUser
+  );
 
   const { t } = useTranslation();
 
@@ -46,6 +54,31 @@ export default function Login() {
   console.log("🚀 ~ Login ~ errors:", errors);
 
   const theme = useAppTheme();
+
+  const mutation = useMutation<{
+    data: { accessToken: string; refreshToken: string };
+  }>({
+    mutationFn: (newTodo) => {
+      return api.post("http://localhost:3333/api/auth/local/signin", {
+        email: "test@test.test",
+        password: "test",
+      });
+    },
+    onError: (error) => {
+      console.log("🚀 ~ Login ~ error:", error);
+    },
+    onSuccess: async (response) => {
+      console.log("🚀 ~ Login ~ response:", response);
+      const { refreshToken, accessToken } = response.data;
+
+      await saveItemInSecureStore("access_token", accessToken);
+      await saveItemInSecureStore("refresh_token", refreshToken);
+
+      const decoded = jwtDecode(accessToken);
+      console.log("🚀 ~ onSuccess: ~ decoded:", decoded);
+      setAuthenticatedUser(true, Number(decoded.sub));
+    },
+  });
 
   return (
     <Container withHeader>
@@ -174,6 +207,9 @@ export default function Login() {
                   }}
                 >
                   {t("login")}
+                </Button>
+                <Button onPress={() => mutation.mutate()}>
+                  test login api
                 </Button>
               </Animated.View>
             </View>

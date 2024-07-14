@@ -10,7 +10,8 @@ import { useCheckAuthentication } from "@/hooks/useCheckAuthentication";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  const { authenticated } = useAuthStore((state) => state.authState);
+  const { authenticated, userId } = useAuthStore((state) => state.authState);
+  console.log("🚀 ~ TabLayout ~ userId:", userId);
   console.log("🚀 ~ TabLayout ~ authenticated:", authenticated);
 
   useCheckAuthentication(authenticated);
