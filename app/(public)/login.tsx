@@ -1,8 +1,7 @@
 import React from "react";
-import { ThemedView } from "@/components/ThemedView";
 import { useAuthStore } from "@/store/authStore";
 import { useCheckAuthenticated } from "@/hooks/useCheckAuthenticated";
-import { Button, Surface, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -58,7 +57,7 @@ export default function Login() {
                   fontFamily: "Lobster",
                 }}
               >
-                LostPetFinder
+                {t("appName")}
               </Text>
             </Animated.View>
             <Animated.View
@@ -67,7 +66,7 @@ export default function Login() {
               style={{ marginBottom: 10 }}
             >
               <TextInput
-                label="Email"
+                label={t("email")}
                 value={text}
                 onChangeText={(text) => setText(text)}
                 mode="outlined"
@@ -79,7 +78,7 @@ export default function Login() {
               style={{ marginBottom: 10 }}
             >
               <TextInput
-                label="Password"
+                label={t("password")}
                 value={text}
                 onChangeText={(text) => setText(text)}
                 mode="outlined"
