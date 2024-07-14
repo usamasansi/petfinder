@@ -1,0 +1,12 @@
+{
+  "yes": "Yes",
+  "no": "No",
+  "back": "Back",
+  "login": "Login",
+  "email": "Email",
+  "password": "Password",
+  "forgotPassword": "Forgot Password?",
+  "signUp": "Sign Up",
+  "confirmPassword": "Confirm Password",
+  "createAccount": "Create Account"
+}
