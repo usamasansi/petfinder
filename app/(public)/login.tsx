@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuthStore } from "@/store/authStore";
-import { useCheckAuthenticated } from "@/hooks/useCheckAuthenticated";
+import { useCheckAuthentication } from "@/hooks/useCheckAuthentication";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import {
   KeyboardAvoidingView,
@@ -24,7 +24,7 @@ import { blurhash } from "@/lib/utils";
 export default function Login() {
   const { authenticated } = useAuthStore((state) => state.authState);
 
-  useCheckAuthenticated(authenticated);
+  useCheckAuthentication(authenticated);
 
   const { t } = useTranslation();
 

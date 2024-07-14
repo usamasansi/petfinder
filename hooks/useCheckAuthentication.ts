@@ -2,7 +2,7 @@ import { router, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { useIsNavigationReady } from "./useIsNavigationReady";
 
-export function useCheckAuthenticated(authenticated: boolean | null) {
+export function useCheckAuthentication(authenticated: boolean | null) {
   console.log("🚀 ~ useProtectedRoute ~ authenticated:", authenticated);
   const segments = useSegments();
   const isNavigationReady = useIsNavigationReady();
