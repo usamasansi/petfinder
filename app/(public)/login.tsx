@@ -24,6 +24,7 @@ import { blurhash, saveItemInSecureStore } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { jwtDecode } from "jwt-decode";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function Login() {
   const { authenticated, userId } = useAuthStore((state) => state.authState);
@@ -49,19 +50,20 @@ export default function Login() {
     },
     resolver: zodResolver(LoginSchema(t)),
   });
-  const onSubmit = (data: LoginFormData) => console.log(data);
+  const onSubmit = (data: LoginFormData) => {
+    console.log("🚀 ~ onSubmit ~ data:", data);
+    mutation.mutate(data);
+  };
 
   console.log("🚀 ~ Login ~ errors:", errors);
 
   const theme = useAppTheme();
 
-  const mutation = useMutation<{
-    data: { accessToken: string; refreshToken: string };
-  }>({
-    mutationFn: (newTodo) => {
+  const mutation = useMutation({
+    mutationFn: (formData: LoginFormData) => {
       return api.post("http://localhost:3333/api/auth/local/signin", {
-        email: "test@test.test",
-        password: "test",
+        email: formData.email,
+        password: formData.password,
       });
     },
     onError: (error) => {
@@ -141,6 +143,7 @@ export default function Login() {
                       onSubmitEditing={() => setFocus("password")}
                       ref={ref}
                       returnKeyType="next"
+                      autoCapitalize="none"
                     />
                     {errors.email ? (
                       <HelperText type="error" visible={!!errors.email}>
@@ -173,6 +176,7 @@ export default function Login() {
                       onSubmitEditing={handleSubmit(onSubmit)}
                       ref={ref}
                       returnKeyType="done"
+                      autoCapitalize="none"
                     />
                     {errors.password ? (
                       <HelperText type="error" visible={!!errors.password}>
@@ -208,9 +212,8 @@ export default function Login() {
                 >
                   {t("login")}
                 </Button>
-                <Button onPress={() => mutation.mutate()}>
-                  test login api
-                </Button>
+                <ThemedText>test1234@test.test</ThemedText>
+                <ThemedText>test1234</ThemedText>
               </Animated.View>
             </View>
           </TouchableWithoutFeedback>
