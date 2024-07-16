@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useCheckAuthentication } from "@/hooks/useCheckAuthentication";
 import {
@@ -89,8 +89,15 @@ export default function Login() {
           saveItemInSecureStore("login_password", data.password);
         }
       })
-      .catch((error) => {
+      .catch((error: Error | AxiosError) => {
         console.log("🚀 ~ mutation.mutateAsync ~ error:", error);
+        if (isAxiosError(error)) {
+          if (error.response?.data.message) {
+            toast.error(error.response?.data.message);
+          }
+        } else {
+          toast.error(t("somethingWentWrong"));
+        }
       });
   };
 
@@ -104,15 +111,6 @@ export default function Login() {
         email: formData.email,
         password: formData.password,
       });
-    },
-    onError: (error: Error | AxiosError) => {
-      if (isAxiosError(error)) {
-        if (error.response?.data.message) {
-          toast.error(error.response?.data.message);
-        }
-      } else {
-        toast.error(t("somethingWentWrong"));
-      }
     },
     onSuccess: async (response) => {
       console.log("🚀 ~ Login ~ response:", response);
