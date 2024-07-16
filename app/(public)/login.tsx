@@ -1,11 +1,18 @@
 import React, { useContext } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useCheckAuthentication } from "@/hooks/useCheckAuthentication";
-import { Button, HelperText, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  Checkbox,
+  HelperText,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -47,6 +54,7 @@ export default function Login() {
     defaultValues: {
       email: "",
       password: "",
+      rememberUser: false,
     },
     resolver: zodResolver(LoginSchema(t)),
   });
@@ -191,8 +199,55 @@ export default function Login() {
               <Animated.View
                 entering={FadeIn.duration(850)}
                 exiting={FadeOut.duration(850)}
-                style={{ marginBottom: 10, alignSelf: "center" }}
+                style={{
+                  marginBottom: 10,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  gap: 18,
+                }}
               >
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                  }}
+                  render={({ field: { onChange, value } }) => {
+                    console.log("checkbox value", value);
+                    return (
+                      <Animated.View
+                        entering={FadeIn.duration(750)}
+                        exiting={FadeOut.duration(750)}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            flexDirection: "row",
+                          }}
+                          onPress={() => onChange(!value)}
+                          activeOpacity={0.7}
+                        >
+                          <Checkbox.Android
+                            status={value ? "checked" : "unchecked"}
+                            onPress={() => onChange(!value)}
+                          />
+                          <ThemedText>{t("saveLoginData")}</ThemedText>
+                        </TouchableOpacity>
+                        {errors.rememberUser ? (
+                          <HelperText
+                            type="error"
+                            visible={!!errors.rememberUser}
+                          >
+                            {errors.rememberUser.message}
+                          </HelperText>
+                        ) : null}
+                      </Animated.View>
+                    );
+                  }}
+                  name="rememberUser"
+                />
+
                 <Button
                   mode="outlined"
                   onPress={handleSubmit(onSubmit)}
@@ -212,9 +267,9 @@ export default function Login() {
                 >
                   {t("login")}
                 </Button>
-                <ThemedText>test1234@test.test</ThemedText>
-                <ThemedText>test1234</ThemedText>
               </Animated.View>
+              <ThemedText>test1234@test.test</ThemedText>
+              <ThemedText>test1234</ThemedText>
             </View>
           </TouchableWithoutFeedback>
         </ScrollView>

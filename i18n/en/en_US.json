@@ -11,5 +11,6 @@
   "confirmPassword": "Confirm Password",
   "createAccount": "Create Account",
   "emailValidationMessage": "Invalid email address format",
-  "passwordValidationMin8Message": "Password must contain a minimum of 8 characters"
+  "passwordValidationMin8Message": "Password must contain a minimum of 8 characters",
+  "saveLoginData": "Save"
 }
