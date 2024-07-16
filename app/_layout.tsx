@@ -12,6 +12,9 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Material3ThemeProvider } from "@/lib/theme/Material3ThemeProvider";
 import { useCheckLocalization } from "@/hooks/useCheckLocalization";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toasts } from "@backpackapp-io/react-native-toast";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const queryClient = new QueryClient();
 
@@ -50,26 +53,31 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Material3ThemeProvider>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack>
-            <Stack.Screen
-              name="(auth)/(tabs)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(public)/login"
-              options={{
-                headerShown: true,
-                title: "Login",
-              }}
-            />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </ThemeProvider>
-      </Material3ThemeProvider>
+      <SafeAreaProvider>
+        <GestureHandlerRootView>
+          <Material3ThemeProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Stack>
+                <Stack.Screen
+                  name="(auth)/(tabs)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="(public)/login"
+                  options={{
+                    headerShown: true,
+                    title: "Login",
+                  }}
+                />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <Toasts />
+            </ThemeProvider>
+          </Material3ThemeProvider>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 }
