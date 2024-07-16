@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useCheckAuthentication } from "@/hooks/useCheckAuthentication";
 import {
@@ -27,17 +27,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
 import { isErrorsObjectEmpty } from "@/validation/helpers";
 import { LoginFormData, LoginSchema } from "@/validation/login";
-import { blurhash, saveItemInSecureStore } from "@/lib/utils";
+import {
+  blurhash,
+  getValueFromSecureStoreFor,
+  saveItemInSecureStore,
+} from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { jwtDecode } from "jwt-decode";
 import { ThemedText } from "@/components/ThemedText";
+import { AxiosError, isAxiosError } from "axios";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 export default function Login() {
   const { authenticated, userId } = useAuthStore((state) => state.authState);
   console.log("🚀 ~ Login ~ userId:", userId);
   console.log("🚀 ~ Login ~ authenticated:", authenticated);
   useCheckAuthentication(authenticated);
+
+  useEffect(() => {
+    const getSavedLoginFormData = async () => {
+      const loginEmail = await getValueFromSecureStoreFor("login_email");
+      const loginPassword = await getValueFromSecureStoreFor("login_password");
+
+      if (loginEmail) setValue("email", loginEmail);
+      if (loginPassword) setValue("password", loginPassword);
+    };
+
+    getSavedLoginFormData();
+  }, []);
 
   const setAuthenticatedUser = useAuthStore(
     (state) => state.setAuthenticatedUser
@@ -49,6 +67,7 @@ export default function Login() {
     control,
     handleSubmit,
     setFocus,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({
     defaultValues: {
@@ -59,8 +78,20 @@ export default function Login() {
     resolver: zodResolver(LoginSchema(t)),
   });
   const onSubmit = (data: LoginFormData) => {
+    const { rememberUser } = data;
+
     console.log("🚀 ~ onSubmit ~ data:", data);
-    mutation.mutate(data);
+    mutation
+      .mutateAsync(data)
+      .then(() => {
+        if (rememberUser) {
+          saveItemInSecureStore("login_email", data.email);
+          saveItemInSecureStore("login_password", data.password);
+        }
+      })
+      .catch((error) => {
+        console.log("🚀 ~ mutation.mutateAsync ~ error:", error);
+      });
   };
 
   console.log("🚀 ~ Login ~ errors:", errors);
@@ -74,8 +105,14 @@ export default function Login() {
         password: formData.password,
       });
     },
-    onError: (error) => {
-      console.log("🚀 ~ Login ~ error:", error);
+    onError: (error: Error | AxiosError) => {
+      if (isAxiosError(error)) {
+        if (error.response?.data.message) {
+          toast.error(error.response?.data.message);
+        }
+      } else {
+        toast.error(t("somethingWentWrong"));
+      }
     },
     onSuccess: async (response) => {
       console.log("🚀 ~ Login ~ response:", response);

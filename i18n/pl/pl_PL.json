@@ -12,5 +12,6 @@
   "createAccount": "Stwórz konto",
   "emailValidationMessage": "Nieprawidłowy format adresu email",
   "passwordValidationMin8Message": "Hasło musi zawierać minimalnie 8 znaków",
-  "saveLoginData": "Zapisz"
+  "saveLoginData": "Zapisz",
+  "somethingWentWrong": "Coś poszło nie tak..."
 }

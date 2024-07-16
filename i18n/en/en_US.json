@@ -12,5 +12,6 @@
   "createAccount": "Create Account",
   "emailValidationMessage": "Invalid email address format",
   "passwordValidationMin8Message": "Password must contain a minimum of 8 characters",
-  "saveLoginData": "Save"
+  "saveLoginData": "Save",
+  "somethingWentWrong": "Something went wrong..."
 }
