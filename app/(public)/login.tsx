@@ -38,6 +38,7 @@ import { jwtDecode } from "jwt-decode";
 import { ThemedText } from "@/components/ThemedText";
 import { AxiosError, isAxiosError } from "axios";
 import { toast } from "@backpackapp-io/react-native-toast";
+import { endpoints } from "@/lib/api/endpoints";
 
 export default function Login() {
   const { authenticated, userId } = useAuthStore((state) => state.authState);
@@ -68,7 +69,7 @@ export default function Login() {
     handleSubmit,
     setFocus,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     defaultValues: {
       email: "",
@@ -77,6 +78,7 @@ export default function Login() {
     },
     resolver: zodResolver(LoginSchema(t)),
   });
+
   const onSubmit = (data: LoginFormData) => {
     const { rememberUser } = data;
 
@@ -107,7 +109,7 @@ export default function Login() {
 
   const mutation = useMutation({
     mutationFn: (formData: LoginFormData) => {
-      return api.post("http://localhost:3333/api/auth/local/signin", {
+      return api.post(endpoints.public.login, {
         email: formData.email,
         password: formData.password,
       });
@@ -187,6 +189,7 @@ export default function Login() {
                       ref={ref}
                       returnKeyType="next"
                       autoCapitalize="none"
+                      keyboardType="email-address"
                     />
                     {errors.email ? (
                       <HelperText type="error" visible={!!errors.email}>
@@ -220,6 +223,8 @@ export default function Login() {
                       ref={ref}
                       returnKeyType="done"
                       autoCapitalize="none"
+                      secureTextEntry={true}
+                      keyboardType="visible-password"
                     />
                     {errors.password ? (
                       <HelperText type="error" visible={!!errors.password}>
@@ -285,6 +290,8 @@ export default function Login() {
 
                 <Button
                   mode="outlined"
+                  disabled={isSubmitting}
+                  loading={isSubmitting}
                   onPress={handleSubmit(onSubmit)}
                   buttonColor={
                     isErrorsObjectEmpty(errors) ? undefined : theme.colors.error
