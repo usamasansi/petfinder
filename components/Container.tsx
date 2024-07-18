@@ -3,7 +3,7 @@ import { ThemedView } from "./ThemedView";
 
 type Props = {
   children: ReactNode;
-  withHeader: boolean;
+  withHeader?: boolean;
 };
 const Container: FC<Props> = ({ children, withHeader = false }) => {
   return (
