@@ -7,6 +7,7 @@ import {
   saveItemInSecureStore,
 } from "../utils";
 import { Alert } from "react-native";
+import { endpoints } from "./endpoints";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -47,7 +48,7 @@ api.interceptors.response.use(
         const refreshTokenFromSecureStore = await getValueFromSecureStoreFor(
           "refresh_token"
         );
-        const response = await api.post("/api/auth/refresh", {
+        const response = await api.post(endpoints.auth.refreshToken, {
           refreshTokenFromSecureStore,
         });
         const { accessToken, refreshToken } = response.data;
