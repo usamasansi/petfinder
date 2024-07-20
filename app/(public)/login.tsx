@@ -96,7 +96,9 @@ export default function Login() {
         if (isAxiosError(error)) {
           if (error.response?.data.message) {
             toast.error(error.response?.data.message);
+            return;
           }
+          toast.error(t("somethingWentWrong") + error);
         } else {
           toast.error(t("somethingWentWrong"));
         }
