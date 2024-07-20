@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Icon, IconButton, Text } from "react-native-paper";
 import { Link } from "expo-router";
 import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
 
 export function ExploreHeader() {
   const theme = useAppTheme();
@@ -36,10 +37,11 @@ export function ExploreHeader() {
               </TouchableOpacity>
             </Link>
             <IconButton
-              icon="filter-variant"
+              icon={({ color, size }) => (
+                <Ionicons name="options-outline" color={color} size={size} />
+              )}
               mode="outlined"
-              // iconColor={MD3Colors.error50}
-              size={30}
+              size={28}
               onPress={() => console.log("Pressed")}
             />
           </View>
