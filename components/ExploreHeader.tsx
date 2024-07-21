@@ -1,5 +1,6 @@
 import {
   Platform,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -7,14 +8,11 @@ import {
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { ThemedView } from "./ThemedView";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Icon, IconButton, Text } from "react-native-paper";
 import { Link } from "expo-router";
 import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { StatusBar } from "expo-status-bar";
-import { useHeaderHeight } from "@react-navigation/elements";
 
 const categories = [
   {
@@ -29,25 +27,83 @@ const categories = [
   },
   {
     id: 3,
+    name: "Pound",
+    icon: "home-roof",
+  },
+  {
+    id: 3,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 4,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 5,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 6,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 7,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 8,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 9,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 10,
+    name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 11,
     name: "Other",
     icon: "ab-testing",
   },
 ];
 
-export function ExploreHeader() {
+type Props = {
+  onCategoryChanged: (category: string) => void;
+};
+
+export function ExploreHeader({ onCategoryChanged }: Props) {
   const theme = useAppTheme();
+  const scrollRef = useRef<ScrollView>(null);
   const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(1);
 
   const selectCategory = (index: number) => {
+    const selected = itemsRef.current[index];
+    selected?.measure((x) => {
+      scrollRef.current?.scrollTo({ x: x - 16, y: 0, animated: true });
+    });
     setActiveIndex(index);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onCategoryChanged(categories[index].name);
   };
 
-  const statusBarHeight = useHeaderHeight();
-  console.log("🚀 ~ ExploreHeader ~ statusBarHeight:", statusBarHeight);
   return (
     <ThemedView>
-      <SafeAreaView style={{ paddingTop: Platform.OS === "android" ? 28 : 0 }}>
+      <SafeAreaView
+        style={{
+          paddingTop: Platform.OS === "android" ? 28 : 0,
+        }}
+      >
         <View style={styles.container}>
           <View style={styles.actionRow}>
             <Link
@@ -82,11 +138,12 @@ export function ExploreHeader() {
             />
           </View>
           <ScrollView
+            ref={scrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
               alignItems: "center",
-              gap: 20,
+              gap: 30,
               paddingHorizontal: 16,
             }}
           >
