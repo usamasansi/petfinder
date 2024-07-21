@@ -133,6 +133,7 @@ export default function Login() {
     <Container withHeader>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
         <ScrollView
           bounces={false}
