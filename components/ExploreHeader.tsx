@@ -37,8 +37,8 @@ export function ExploreHeader() {
               </TouchableOpacity>
             </Link>
             <IconButton
-              icon={({ color, size }) => (
-                <Ionicons name="options-outline" color={color} size={size} />
+              icon={({ color }) => (
+                <Ionicons name="options-outline" color={color} size={24} />
               )}
               mode="outlined"
               size={28}
