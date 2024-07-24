@@ -122,8 +122,8 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
                 <Icon size={24} source="magnify" />
                 <View>
                   <Text style={{ fontWeight: "600" }}>Where to?</Text>
-                  <Text style={{ color: theme.colors.secondary }}>
-                    Anywhere · Any week
+                  <Text style={{ color: theme.colors.secondary, fontSize: 13 }}>
+                    To my pet · at any time
                   </Text>
                 </View>
               </TouchableOpacity>
