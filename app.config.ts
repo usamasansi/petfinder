@@ -31,7 +31,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     output: "static",
     favicon: "./assets/images/favicon.png",
   },
-  plugins: ["expo-router", "expo-localization", "expo-secure-store"],
+  plugins: [
+    "expo-router",
+    [
+      "expo-localization",
+      {
+        locationAlwaysAndWhenInUsePermission:
+          "Allow $(PRODUCT_NAME) to use your location.",
+      },
+    ],
+    "expo-secure-store",
+  ],
   experiments: {
     typedRoutes: true,
   },

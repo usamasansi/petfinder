@@ -4,12 +4,17 @@ import { ThemedView } from "./ThemedView";
 type Props = {
   children: ReactNode;
   withHeader?: boolean;
+  noFlex?: boolean;
 };
-const Container: FC<Props> = ({ children, withHeader = false }) => {
+const Container: FC<Props> = ({
+  children,
+  withHeader = false,
+  noFlex = false,
+}) => {
   return (
     <ThemedView
       style={{
-        flex: 1,
+        flex: noFlex ? 0 : 1,
         paddingTop: withHeader ? 18 : 98,
         paddingLeft: 18,
         paddingRight: 18,
