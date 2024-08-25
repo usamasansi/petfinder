@@ -12,12 +12,18 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import Container from "@/components/Container";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { Image } from "expo-image";
 import { Images } from "@/assets/images";
 import { Keyboard } from "react-native";
@@ -131,6 +137,10 @@ export default function Login() {
   });
 
   const { isKeyboardOpen } = useKeyboardState();
+  const animatedStyle = useAnimatedStyle(() => ({
+    height: withTiming(isKeyboardOpen ? 0 : 150, { duration: 250 }),
+    opacity: withTiming(isKeyboardOpen ? 0 : 1, { duration: 250 }),
+  }));
 
   return (
     <Container withHeader>
@@ -148,24 +158,15 @@ export default function Login() {
             <View>
               <Animated.View
                 key={"uniqueKey"}
-                entering={FadeIn.duration(250)}
-                exiting={FadeOut.duration(250)}
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: 10,
-                  zIndex: 9999,
-                }}
+                style={[styles.animationContainer, animatedStyle]}
               >
-                {isKeyboardOpen ? null : (
-                  <Image
-                    style={{ width: 150, height: 150 }}
-                    source={Images.LogoImage}
-                    placeholder={{ blurhash }}
-                    contentFit="cover"
-                    transition={1000}
-                  />
-                )}
+                <Image
+                  style={styles.logo}
+                  source={Images.LogoImage}
+                  placeholder={{ blurhash }}
+                  contentFit="cover"
+                  transition={1000}
+                />
               </Animated.View>
               <Text
                 variant="headlineLarge"
@@ -329,3 +330,17 @@ export default function Login() {
     </Container>
   );
 }
+
+const styles = StyleSheet.create({
+  animationContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+    zIndex: 1,
+    overflow: "hidden",
+  },
+  logo: {
+    width: 150,
+    height: 150,
+  },
+});
