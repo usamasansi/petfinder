@@ -42,7 +42,7 @@ const ListingsMap = ({ listings }: Props) => {
   return (
     <View style={styles.container}>
       <MapView
-        style={styles.map}
+        style={StyleSheet.absoluteFill}
         // provider={PROVIDER_GOOGLE} // todo: apply google api key to use it on ios and you have to put the google api key if you want to deploy the app to app store/play store
         showsUserLocation
         showsMyLocationButton
@@ -55,10 +55,6 @@ const ListingsMap = ({ listings }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
   },
 });
 
