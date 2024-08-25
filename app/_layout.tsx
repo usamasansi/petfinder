@@ -10,11 +10,11 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Material3ThemeProvider } from "@/lib/theme/Material3ThemeProvider";
-import { useCheckLocalization } from "@/hooks/useCheckLocalization";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import "@/i18n";
 
 const queryClient = new QueryClient();
 
@@ -44,8 +44,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-
-  useCheckLocalization();
 
   if (!loaded) {
     return null;
