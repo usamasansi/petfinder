@@ -27,51 +27,21 @@ const categories = [
   },
   {
     id: 3,
-    name: "Pound",
-    icon: "home-roof",
-  },
-  {
-    id: 3,
-    name: "Other",
+    name: "Rabbits",
     icon: "ab-testing",
   },
   {
     id: 4,
-    name: "Other",
+    name: "Horses",
     icon: "ab-testing",
   },
   {
     id: 5,
-    name: "Other",
+    name: "Birds",
     icon: "ab-testing",
   },
   {
     id: 6,
-    name: "Other",
-    icon: "ab-testing",
-  },
-  {
-    id: 7,
-    name: "Other",
-    icon: "ab-testing",
-  },
-  {
-    id: 8,
-    name: "Other",
-    icon: "ab-testing",
-  },
-  {
-    id: 9,
-    name: "Other",
-    icon: "ab-testing",
-  },
-  {
-    id: 10,
-    name: "Other",
-    icon: "ab-testing",
-  },
-  {
-    id: 11,
     name: "Other",
     icon: "ab-testing",
   },
@@ -114,28 +84,46 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
               <TouchableOpacity
                 style={{
                   ...styles.searchBtn,
-                  borderColor: theme.colors.secondary,
-                  backgroundColor: theme.colors.background,
-                  shadowColor: theme.colors.onBackground,
+                  // borderColor: theme.colors.secondary,
+                  // backgroundColor: theme.colors.background,
+                  // shadowColor: theme.colors.onBackground,
+                  backgroundColor: theme.colors.backdrop,
                 }}
+                onPress={() =>
+                  console.log(
+                    "todo: go to modal view where you can hit a google location api"
+                  )
+                }
               >
-                <Icon size={24} source="magnify" />
-                <View>
-                  <Text style={{ fontWeight: "600" }}>Where to?</Text>
-                  <Text style={{ color: theme.colors.secondary, fontSize: 13 }}>
-                    To my pet · at any time
-                  </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 10,
+                    alignItems: "center",
+                    marginLeft: 16,
+                  }}
+                >
+                  <Icon size={24} source="magnify" />
+                  <View>
+                    <Text style={{ fontWeight: "600" }}>Search to my pet</Text>
+                    <Text
+                      style={{ color: theme.colors.secondary, fontSize: 13 }}
+                    >
+                      Places · Locations
+                    </Text>
+                  </View>
                 </View>
+                <IconButton
+                  icon={({ color }) => (
+                    <Ionicons name="options-outline" color={color} size={24} />
+                  )}
+                  // mode="contained-tonal"
+                  size={24}
+                  onPress={() => console.log("Pressed")}
+                  // style={{ backgroundColor: "red" }}
+                />
               </TouchableOpacity>
             </Link>
-            <IconButton
-              icon={({ color }) => (
-                <Ionicons name="options-outline" color={color} size={24} />
-              )}
-              mode="outlined"
-              size={28}
-              onPress={() => console.log("Pressed")}
-            />
           </View>
           <ScrollView
             ref={scrollRef}
@@ -197,26 +185,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 24,
+    paddingHorizontal: 18,
     paddingBottom: 16,
-    gap: 10,
   },
   searchBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
     borderWidth: StyleSheet.hairlineWidth,
-    elevation: 2,
+    elevation: 1,
     flex: 1,
-    padding: 14,
-    borderRadius: 30,
-
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: {
-      width: 1,
-      height: 1,
-    },
+    // padding: 10,
+    // paddingLeft: 10,
+    backgroundColor: "red",
+    justifyContent: "space-between",
+    borderRadius: 24,
   },
   categoriesBtn: {
     flex: 1,
