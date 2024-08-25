@@ -105,7 +105,7 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
                 >
                   <Icon size={24} source="magnify" />
                   <View>
-                    <Text style={{ fontWeight: "600" }}>Search to my pet</Text>
+                    <Text style={{ fontWeight: "600" }}>Search</Text>
                     <Text
                       style={{ color: theme.colors.secondary, fontSize: 13 }}
                     >
