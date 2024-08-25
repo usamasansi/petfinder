@@ -39,6 +39,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { AxiosError, isAxiosError } from "axios";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { endpoints } from "@/lib/api/endpoints";
+import useKeyboardState from "@/hooks/useKeyboardState";
 
 export default function Login() {
   const { authenticated, userId } = useAuthStore((state) => state.authState);
@@ -129,6 +130,8 @@ export default function Login() {
     },
   });
 
+  const { isKeyboardOpen } = useKeyboardState();
+
   return (
     <Container withHeader>
       <KeyboardAvoidingView
@@ -144,32 +147,36 @@ export default function Login() {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
               <Animated.View
+                key={"uniqueKey"}
                 entering={FadeIn.duration(250)}
                 exiting={FadeOut.duration(250)}
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
                   marginBottom: 10,
+                  zIndex: 9999,
                 }}
               >
-                <Image
-                  style={{ width: 150, height: 150 }}
-                  source={Images.LogoImage}
-                  placeholder={{ blurhash }}
-                  contentFit="cover"
-                  transition={1000}
-                />
-                <Text
-                  variant="headlineLarge"
-                  style={{
-                    textAlign: "center",
-                    marginBottom: 10,
-                    fontFamily: "Lobster",
-                  }}
-                >
-                  {t("appName")}
-                </Text>
+                {isKeyboardOpen ? null : (
+                  <Image
+                    style={{ width: 150, height: 150 }}
+                    source={Images.LogoImage}
+                    placeholder={{ blurhash }}
+                    contentFit="cover"
+                    transition={1000}
+                  />
+                )}
               </Animated.View>
+              <Text
+                variant="headlineLarge"
+                style={{
+                  textAlign: "center",
+                  marginBottom: 10,
+                  fontFamily: "Lobster",
+                }}
+              >
+                {t("appName")}
+              </Text>
               <Controller
                 control={control}
                 rules={{
