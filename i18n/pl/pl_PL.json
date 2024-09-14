@@ -13,5 +13,6 @@
   "emailValidationMessage": "Nieprawidłowy format adresu email",
   "passwordValidationMin8Message": "Hasło musi zawierać minimalnie 8 znaków",
   "saveLoginData": "Zapisz",
-  "somethingWentWrong": "Coś poszło nie tak..."
+  "somethingWentWrong": "Coś poszło nie tak...",
+  "turnInLocationToUseAppFunctions": "Aby korzystać ze wszystkich funkcji tej aplikacji, włącz lokalizację"
 }
