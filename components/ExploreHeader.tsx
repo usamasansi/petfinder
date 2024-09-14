@@ -68,12 +68,12 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
   };
 
   return (
-    <ThemedView>
-      <SafeAreaView
-        style={{
-          paddingTop: Platform.OS === "android" ? 28 : 0,
-        }}
-      >
+    <ThemedView
+      style={{
+        paddingTop: Platform.OS === "android" ? 42 : 0,
+      }}
+    >
+      <SafeAreaView>
         <View style={styles.container}>
           <View style={styles.actionRow}>
             <Link
@@ -84,10 +84,6 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
               <TouchableOpacity
                 style={{
                   ...styles.searchBtn,
-                  // borderColor: theme.colors.secondary,
-                  // backgroundColor: theme.colors.background,
-                  // shadowColor: theme.colors.onBackground,
-                  backgroundColor: theme.colors.backdrop,
                 }}
                 onPress={() =>
                   console.log(
@@ -117,10 +113,8 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
                   icon={({ color }) => (
                     <Ionicons name="options-outline" color={color} size={24} />
                   )}
-                  // mode="contained-tonal"
                   size={24}
                   onPress={() => console.log("Pressed")}
-                  // style={{ backgroundColor: "red" }}
                 />
               </TouchableOpacity>
             </Link>
@@ -193,11 +187,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     borderWidth: StyleSheet.hairlineWidth,
-    elevation: 1,
     flex: 1,
-    // padding: 10,
-    // paddingLeft: 10,
-    backgroundColor: "red",
     justifyContent: "space-between",
     borderRadius: 24,
   },
