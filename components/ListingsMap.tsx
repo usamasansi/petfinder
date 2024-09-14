@@ -22,20 +22,24 @@ const ListingsMap = ({ listings }: Props) => {
   console.log("🚀 ~ ListingsMap ~ location:", location);
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
 
-      let location = await Location.getCurrentPositionAsync({});
-      const cords: Cords = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        longitudeDelta: 0.0922,
-        latitudeDelta: 0.0421,
-      };
-      setLocation(cords);
+        let location = await Location.getCurrentPositionAsync({});
+        const cords: Cords = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          longitudeDelta: 0.0922,
+          latitudeDelta: 0.0421,
+        };
+        setLocation(cords);
+      } catch (error) {
+        console.log("🚀 ~ error in request location:", error);
+      }
     })();
   }, []);
 
