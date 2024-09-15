@@ -1,5 +1,4 @@
 import { useAuthStore } from "@/store/authStore";
-import Container from "@/components/Container";
 import { Stack } from "expo-router";
 import { ExploreHeader } from "@/components/ExploreHeader";
 import { useState } from "react";
