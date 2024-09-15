@@ -17,13 +17,11 @@ export default function HomeScreen() {
   };
   return (
     <>
-      <Container withHeader noFlex>
-        <Stack.Screen
-          options={{
-            header: () => <ExploreHeader onCategoryChanged={onDataChanged} />,
-          }}
-        />
-      </Container>
+      <Stack.Screen
+        options={{
+          header: () => <ExploreHeader onCategoryChanged={onDataChanged} />,
+        }}
+      />
       {/* <Listings listings={[]} category={category} /> */}
       <ListingsMap listings={listingsDataGeo} />
     </>

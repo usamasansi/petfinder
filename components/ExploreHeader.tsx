@@ -1,7 +1,6 @@
 import {
+  FlatList,
   Platform,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -13,6 +12,8 @@ import { Link } from "expo-router";
 import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { MotiView } from "moti";
 
 const categories = [
   {
@@ -27,22 +28,32 @@ const categories = [
   },
   {
     id: 3,
-    name: "Rabbits",
+    name: "Rabbit",
     icon: "ab-testing",
   },
   {
     id: 4,
-    name: "Horses",
+    name: "Horse",
     icon: "ab-testing",
   },
   {
     id: 5,
-    name: "Birds",
+    name: "Bird",
     icon: "ab-testing",
   },
   {
     id: 6,
     name: "Other",
+    icon: "ab-testing",
+  },
+  {
+    id: 7,
+    name: "Other2",
+    icon: "ab-testing",
+  },
+  {
+    id: 8,
+    name: "Other3",
     icon: "ab-testing",
   },
 ];
@@ -51,16 +62,20 @@ type Props = {
   onCategoryChanged: (category: string) => void;
 };
 
+const SPACING = 10;
+
 export function ExploreHeader({ onCategoryChanged }: Props) {
   const theme = useAppTheme();
-  const scrollRef = useRef<ScrollView>(null);
-  const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
-  const [activeIndex, setActiveIndex] = useState(1);
+
+  const flatListRef = useRef<FlatList>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const selectCategory = (index: number) => {
-    const selected = itemsRef.current[index];
-    selected?.measure((x) => {
-      scrollRef.current?.scrollTo({ x: x - 16, y: 0, animated: true });
+    flatListRef.current?.scrollToIndex({
+      index,
+      animated: true,
+      viewOffset: SPACING,
+      viewPosition: 0.5,
     });
     setActiveIndex(index);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -68,11 +83,7 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
   };
 
   return (
-    <ThemedView
-      style={{
-        paddingTop: Platform.OS === "android" ? 42 : 0,
-      }}
-    >
+    <ThemedView>
       <SafeAreaView>
         <View style={styles.container}>
           <View style={styles.actionRow}>
@@ -119,24 +130,25 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
               </TouchableOpacity>
             </Link>
           </View>
-          <ScrollView
-            ref={scrollRef}
-            horizontal
+          <FlatList
+            ref={flatListRef}
             showsHorizontalScrollIndicator={false}
+            initialScrollIndex={activeIndex}
+            style={{ flexGrow: 0 }}
             contentContainerStyle={{
-              alignItems: "center",
               gap: 30,
               paddingHorizontal: 16,
+              paddingBottom: Platform.OS === "android" ? 10 : 0,
             }}
-          >
-            {categories.map((item, index) => {
+            data={categories}
+            keyExtractor={(item) => item.name}
+            horizontal
+            renderItem={({ item, index: fIndex }) => {
               return (
                 <TouchableOpacity
-                  key={index}
-                  ref={(element) => (itemsRef.current[index] = element)}
-                  onPress={() => selectCategory(index)}
+                  onPress={() => selectCategory(fIndex)}
                   style={
-                    activeIndex === index
+                    activeIndex === fIndex
                       ? {
                           ...styles.categoriesBtnActive,
                           borderBottomColor: theme.colors.primary,
@@ -144,29 +156,42 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
                       : styles.categoriesBtn
                   }
                 >
-                  <Icon
-                    source={item.icon}
-                    size={24}
-                    color={
-                      activeIndex === index ? theme.colors.primary : undefined
-                    }
-                  />
-                  <Text
-                    variant="labelLarge"
+                  <MotiView
+                    animate={{
+                      opacity: activeIndex === fIndex ? 1 : 0.6,
+                    }}
+                    transition={{ duration: 300 }}
                     style={{
-                      color:
-                        activeIndex === index
-                          ? theme.colors.primary
-                          : theme.colors.onSurface,
-                      fontWeight: "600",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    {item.name}
-                  </Text>
+                    <Icon
+                      source={item.icon}
+                      size={24}
+                      color={
+                        activeIndex === fIndex
+                          ? theme.colors.primary
+                          : undefined
+                      }
+                    />
+                    <Text
+                      variant="labelLarge"
+                      style={{
+                        color:
+                          activeIndex === fIndex
+                            ? theme.colors.primary
+                            : theme.colors.onSurface,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {item.name}
+                    </Text>
+                  </MotiView>
                 </TouchableOpacity>
               );
-            })}
-          </ScrollView>
+            }}
+          />
         </View>
       </SafeAreaView>
     </ThemedView>

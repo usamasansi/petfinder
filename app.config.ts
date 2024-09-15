@@ -41,6 +41,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     "expo-secure-store",
+    "expo-font",
   ],
   experiments: {
     typedRoutes: true,
