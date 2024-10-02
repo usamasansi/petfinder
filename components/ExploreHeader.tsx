@@ -84,7 +84,7 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
 
   return (
     <ThemedView>
-      <SafeAreaView>
+      <SafeAreaView edges={["left", "top", "right"]}>
         <View style={styles.container}>
           <View style={styles.actionRow}>
             <Link
@@ -199,7 +199,9 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    paddingBottom: Platform.OS === "android" ? 0 : 10,
+  },
   actionRow: {
     flexDirection: "row",
     alignItems: "center",
