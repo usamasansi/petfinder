@@ -62,7 +62,14 @@ export default function RootLayout() {
                   name="(auth)/(tabs)"
                   options={{ headerShown: false }}
                 />
-                <Stack.Screen name="(auth)/listing/[id]" />
+                <Stack.Screen
+                  name="(auth)/listing/[id]"
+                  options={{
+                    headerTitle: "",
+                    headerBackTitleVisible: false,
+                    headerTransparent: true,
+                  }}
+                />
                 <Stack.Screen
                   name="(public)/login"
                   options={{

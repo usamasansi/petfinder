@@ -6,11 +6,12 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Icon, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { Link } from "expo-router";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
+import { ThemedView } from "./ThemedView";
 
 type Props = {
   listings: any;
@@ -55,14 +56,13 @@ export default function Listings({ listings: items, category }: Props) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* <Text>Listings</Text> */}
+    <ThemedView style={styles.container}>
       <FlatList
         ref={listRef}
         data={loading ? [] : items}
         renderItem={renderRow}
       />
-    </View>
+    </ThemedView>
   );
 }
 
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-interface Listings {
+export interface Listings {
   id: string;
   listing_url: string;
   scrape_id: string;
