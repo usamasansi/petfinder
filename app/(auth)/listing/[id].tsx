@@ -5,6 +5,7 @@ import Animated, {
   interpolate,
   SlideInDown,
   useAnimatedRef,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
@@ -52,12 +53,17 @@ const Page = () => {
     };
   });
 
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollOffset.value = event.contentOffset.y;
+  });
+
   return (
     <ThemedView style={styles.container}>
       <Animated.ScrollView
         contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT }}
         ref={scrollRef}
         scrollEventThrottle={16}
+        onScroll={scrollHandler}
       >
         <Animated.Image
           source={{ uri: listing.xl_picture_url }}

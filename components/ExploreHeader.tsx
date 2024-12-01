@@ -88,14 +88,11 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
         <View style={styles.container}>
           <View style={styles.actionRow}>
             <Link
-              style={{ color: "red" }}
               href={"/(auth)/(tabs)/explore"}
               asChild
+              style={[styles.searchBtn, { borderColor: theme.colors.outline }]}
             >
               <TouchableOpacity
-                style={{
-                  ...styles.searchBtn,
-                }}
                 onPress={() =>
                   console.log(
                     "todo: go to modal view where you can hit a google location api"
@@ -200,7 +197,8 @@ export function ExploreHeader({ onCategoryChanged }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: Platform.OS === "android" ? 0 : 10,
+    paddingBottom: Platform.OS === "android" ? 0 : 2,
+    paddingTop: Platform.OS === "android" ? 2 : 0,
   },
   actionRow: {
     flexDirection: "row",
