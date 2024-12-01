@@ -7,7 +7,7 @@ import listingsData from "@/assets/mock-data/listings-on-map.json";
 import { ThemedView } from "@/components/ThemedView";
 import { Avatar, Button, Icon, IconButton, Text } from "react-native-paper";
 import Divider from "@/components/Divider";
-import { useDefaultStyles } from "@/constants/Styles";
+import { FOOTER_HEIGHT, useDefaultStyles } from "@/constants/Styles";
 import { useTranslation } from "react-i18next";
 
 const IMG_HEIGHT = 300;
@@ -24,7 +24,9 @@ const Page = () => {
 
   return (
     <ThemedView style={styles.container}>
-      <Animated.ScrollView>
+      <Animated.ScrollView
+        contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT }}
+      >
         <Animated.Image
           source={{ uri: listing.xl_picture_url }}
           style={styles.image}
@@ -69,6 +71,19 @@ const Page = () => {
             </View>
           </View>
           <Divider />
+          <Text variant="bodySmall" style={{ textAlign: "justify" }}>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. A minima
+            eaque odit sint aspernatur asperiores mollitia, quos dolores impedit
+            ipsam amet tempore esse nisi aut laborum similique illo, eligendi
+            deserunt? Neque culpa est temporibus maxime corporis. Molestiae
+            expedita natus praesentium assumenda explicabo illum excepturi
+            maiores ipsum veritatis sed quas, quam libero dolorum illo vel
+            atque, sunt fuga, nemo quaerat voluptatem? Lorem ipsum dolor sit
+            amet consectetur adipisicing elit. Ipsam nesciunt et in. Explicabo
+            numquam sit, perspiciatis corporis laboriosam, obcaecati vel
+            voluptate sunt earum quasi nihil! Cumque repellendus sed nesciunt
+            culpa.
+          </Text>
         </View>
       </Animated.ScrollView>
       <Animated.View

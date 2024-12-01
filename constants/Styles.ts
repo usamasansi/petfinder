@@ -1,6 +1,8 @@
 import { StyleSheet, useColorScheme } from "react-native";
 import { Colors } from "./Colors";
 
+export const FOOTER_HEIGHT = 100;
+
 export const useDefaultStyles = () => {
   const colorScheme = useColorScheme();
 
@@ -11,7 +13,7 @@ export const useDefaultStyles = () => {
     },
     footer: {
       position: "absolute",
-      height: 100,
+      height: FOOTER_HEIGHT,
       bottom: 0,
       left: 0,
       right: 0,
