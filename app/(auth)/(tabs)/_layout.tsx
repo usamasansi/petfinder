@@ -21,6 +21,18 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: true,
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].background,
+        },
+        headerStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].background,
+        },
+        headerTitleStyle: {
+          color: Colors[colorScheme ?? "light"].text,
+        },
+        sceneStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].background,
+        },
       }}
     >
       <Tabs.Screen

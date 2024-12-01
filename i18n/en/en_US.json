@@ -14,5 +14,7 @@
   "passwordValidationMin8Message": "Password must contain a minimum of 8 characters",
   "saveLoginData": "Save",
   "somethingWentWrong": "Something went wrong...",
-  "turnInLocationToUseAppFunctions": "To use all features of this app, turn on localization"
+  "turnInLocationToUseAppFunctions": "To use all features of this app, turn on localization",
+  "listingSlugFooterText": "Is this pet similar to yours?",
+  "saveForLater": "Save for later"
 }

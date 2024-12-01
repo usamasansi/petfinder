@@ -14,5 +14,7 @@
   "passwordValidationMin8Message": "Hasło musi zawierać minimalnie 8 znaków",
   "saveLoginData": "Zapisz",
   "somethingWentWrong": "Coś poszło nie tak...",
-  "turnInLocationToUseAppFunctions": "Aby korzystać ze wszystkich funkcji tej aplikacji, włącz lokalizację"
+  "turnInLocationToUseAppFunctions": "Aby korzystać ze wszystkich funkcji tej aplikacji, włącz lokalizację",
+  "listingSlugFooterText": "Czy ten zwierzak jest podobny do twojego?",
+  "saveForLater": "Zapisz na później"
 }
