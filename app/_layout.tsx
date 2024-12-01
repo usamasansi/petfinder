@@ -15,6 +15,8 @@ import { Toasts } from "@backpackapp-io/react-native-toast";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "@/i18n";
+import { StatusBar } from "expo-status-bar";
+import { Colors } from "@/constants/Colors";
 
 const queryClient = new QueryClient();
 
@@ -57,7 +59,22 @@ export default function RootLayout() {
             <ThemeProvider
               value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
-              <Stack>
+              <StatusBar
+                style={colorScheme === "dark" ? "light" : "dark"}
+                backgroundColor={
+                  colorScheme === "dark"
+                    ? Colors["dark"].background
+                    : Colors["light"].background
+                }
+              />
+              <Stack
+                screenOptions={{
+                  navigationBarColor:
+                    colorScheme === "dark"
+                      ? Colors["dark"].background
+                      : Colors["light"].background,
+                }}
+              >
                 <Stack.Screen
                   name="(auth)/(tabs)"
                   options={{ headerShown: false }}
