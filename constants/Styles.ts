@@ -11,6 +11,9 @@ export const useDefaultStyles = () => {
       flex: 1,
       backgroundColor: Colors[colorScheme ?? "light"]?.background,
     },
+    content: {
+      backgroundColor: Colors[colorScheme ?? "light"]?.background,
+    },
     footer: {
       position: "absolute",
       height: FOOTER_HEIGHT,

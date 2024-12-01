@@ -1,7 +1,13 @@
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
-import Animated, { SlideInDown } from "react-native-reanimated";
+import Animated, {
+  interpolate,
+  SlideInDown,
+  useAnimatedRef,
+  useAnimatedStyle,
+  useScrollViewOffset,
+} from "react-native-reanimated";
 import { Listings } from "@/components/Listings";
 import listingsData from "@/assets/mock-data/listings-on-map.json";
 import { ThemedView } from "@/components/ThemedView";
@@ -9,8 +15,6 @@ import { Avatar, Button, Icon, IconButton, Text } from "react-native-paper";
 import Divider from "@/components/Divider";
 import { FOOTER_HEIGHT, useDefaultStyles } from "@/constants/Styles";
 import { useTranslation } from "react-i18next";
-import { Image as ExpoImage } from "expo-image";
-import { blurhash } from "@/lib/utils";
 
 const IMG_HEIGHT = 300;
 const { width } = Dimensions.get("window");
@@ -23,21 +27,44 @@ const Page = () => {
   );
 
   const { t } = useTranslation();
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+
+  const scrollOffset = useScrollViewOffset(scrollRef);
+
+  const animatedImageStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            scrollOffset.value,
+            [-IMG_HEIGHT, 0, IMG_HEIGHT],
+            [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+          ),
+        },
+        {
+          scale: interpolate(
+            scrollOffset.value,
+            [-IMG_HEIGHT, 0, IMG_HEIGHT],
+            [2, 1, 1]
+          ),
+        },
+      ],
+    };
+  });
 
   return (
     <ThemedView style={styles.container}>
       <Animated.ScrollView
         contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT }}
+        ref={scrollRef}
+        scrollEventThrottle={16}
       >
-        <ExpoImage
+        <Animated.Image
           source={{ uri: listing.xl_picture_url }}
-          style={styles.image}
-          transition={700}
-          placeholder={{
-            blurhash: Platform.OS === "ios" ? blurhash : undefined,
-          }}
+          style={[styles.image, animatedImageStyle]}
+          resizeMode="cover"
         />
-        <View style={styles.infoContainer}>
+        <View style={[defaultStyles.content, styles.infoContainer]}>
           <View style={styles.name}>
             <Text variant="headlineLarge">Saw a dog near grocery shop!</Text>
           </View>
@@ -125,10 +152,8 @@ const styles = StyleSheet.create({
   image: {
     width,
     height: IMG_HEIGHT,
-    resizeMode: "cover",
   },
   infoContainer: {
-    flex: 1,
     padding: 24,
   },
   name: {},
