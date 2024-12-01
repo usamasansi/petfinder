@@ -1,7 +1,7 @@
-import { StyleSheet, useColorScheme } from "react-native";
+import { Platform, StyleSheet, useColorScheme } from "react-native";
 import { Colors } from "./Colors";
 
-export const FOOTER_HEIGHT = 100;
+export const FOOTER_HEIGHT = Platform.OS === "ios" ? 100 : 80;
 
 export const useDefaultStyles = () => {
   const colorScheme = useColorScheme();

@@ -66,7 +66,7 @@ export default function RootLayout() {
                   name="(auth)/listing/[id]"
                   options={{
                     headerTitle: "",
-                    headerBackTitleVisible: false,
+                    headerBackButtonDisplayMode: "minimal",
                     headerTransparent: true,
                   }}
                 />

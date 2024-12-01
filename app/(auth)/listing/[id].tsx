@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import Animated, { SlideInDown } from "react-native-reanimated";
@@ -33,7 +33,9 @@ const Page = () => {
           source={{ uri: listing.xl_picture_url }}
           style={styles.image}
           transition={700}
-          placeholder={{ blurhash }}
+          placeholder={{
+            blurhash: Platform.OS === "ios" ? blurhash : undefined,
+          }}
         />
         <View style={styles.infoContainer}>
           <View style={styles.name}>
@@ -106,9 +108,7 @@ const Page = () => {
           </Text>
           <Button
             mode="outlined"
-            style={{ paddingHorizontal: 20 }}
             onPress={() => console.log("adding listing to a favourite")}
-            compact
           >
             {t("saveForLater")}
           </Button>
@@ -127,7 +127,10 @@ const styles = StyleSheet.create({
     height: IMG_HEIGHT,
     resizeMode: "cover",
   },
-  infoContainer: { flex: 1, padding: 24 },
+  infoContainer: {
+    flex: 1,
+    padding: 24,
+  },
   name: {},
   location: { marginTop: 10, flexDirection: "row", gap: 4 },
   addedBy: {
