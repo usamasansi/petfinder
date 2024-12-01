@@ -1,21 +1,27 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
-import Animated from "react-native-reanimated";
+import Animated, { SlideInDown } from "react-native-reanimated";
 import { Listings } from "@/components/Listings";
 import listingsData from "@/assets/mock-data/listings-on-map.json";
 import { ThemedView } from "@/components/ThemedView";
-import { Avatar, Icon, IconButton, Text } from "react-native-paper";
+import { Avatar, Button, Icon, IconButton, Text } from "react-native-paper";
 import Divider from "@/components/Divider";
+import { useDefaultStyles } from "@/constants/Styles";
+import { useTranslation } from "react-i18next";
 
 const IMG_HEIGHT = 300;
 const { width } = Dimensions.get("window");
 
 const Page = () => {
+  const defaultStyles = useDefaultStyles();
   const { id } = useLocalSearchParams<{ id: string }>();
   const listing: Listings = (listingsData as any[]).find(
     (item) => item.id === id
   );
+
+  const { t } = useTranslation();
+
   return (
     <ThemedView style={styles.container}>
       <Animated.ScrollView>
@@ -65,6 +71,30 @@ const Page = () => {
           <Divider />
         </View>
       </Animated.ScrollView>
+      <Animated.View
+        style={defaultStyles.footer}
+        entering={SlideInDown.delay(200)}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text variant="labelLarge" style={{ flexShrink: 1 }}>
+            {t("listingSlugFooterText")}
+          </Text>
+          <Button
+            mode="outlined"
+            style={{ paddingHorizontal: 20 }}
+            onPress={() => console.log("adding listing to a favourite")}
+            compact
+          >
+            {t("saveForLater")}
+          </Button>
+        </View>
+      </Animated.View>
     </ThemedView>
   );
 };
