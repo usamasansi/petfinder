@@ -9,6 +9,8 @@ import { Avatar, Button, Icon, IconButton, Text } from "react-native-paper";
 import Divider from "@/components/Divider";
 import { FOOTER_HEIGHT, useDefaultStyles } from "@/constants/Styles";
 import { useTranslation } from "react-i18next";
+import { Image as ExpoImage } from "expo-image";
+import { blurhash } from "@/lib/utils";
 
 const IMG_HEIGHT = 300;
 const { width } = Dimensions.get("window");
@@ -27,9 +29,11 @@ const Page = () => {
       <Animated.ScrollView
         contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT }}
       >
-        <Animated.Image
+        <ExpoImage
           source={{ uri: listing.xl_picture_url }}
           style={styles.image}
+          transition={700}
+          placeholder={{ blurhash }}
         />
         <View style={styles.infoContainer}>
           <View style={styles.name}>
@@ -71,7 +75,7 @@ const Page = () => {
             </View>
           </View>
           <Divider />
-          <Text variant="bodySmall" style={{ textAlign: "justify" }}>
+          <Text variant="bodyMedium" style={{ textAlign: "justify" }}>
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. A minima
             eaque odit sint aspernatur asperiores mollitia, quos dolores impedit
             ipsam amet tempore esse nisi aut laborum similique illo, eligendi
