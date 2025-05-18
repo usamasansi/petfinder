@@ -38,39 +38,30 @@ import {
   getValueFromSecureStoreFor,
   saveItemInSecureStore,
 } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { jwtDecode } from "jwt-decode";
 import { ThemedText } from "@/components/ThemedText";
-import { AxiosError, isAxiosError } from "axios";
 import { toast } from "@backpackapp-io/react-native-toast";
-import { endpoints } from "@/lib/api/endpoints";
+import { useRouter } from "expo-router";
 import useKeyboardState from "@/hooks/useKeyboardState";
 
 export default function Login() {
-  const { authenticated, userId } = useAuthStore((state) => state.authState);
+  // Auth state from zustand store
+  const { authenticated, userId, loading } = useAuthStore((state) => state.authState);
+  const setAuthenticatedUser = useAuthStore((state) => state.setAuthenticatedUser);
+  const router = useRouter();
+  const { t } = useTranslation();
+  const theme = useAppTheme();
+  const { isKeyboardOpen } = useKeyboardState();
+
+  // Prevent rendering until auth state is loaded
+  if (loading) return null;
+
   console.log("🚀 ~ Login ~ userId:", userId);
   console.log("🚀 ~ Login ~ authenticated:", authenticated);
+
+  // Redirect authenticated users
   useCheckAuthentication(authenticated);
 
-  useEffect(() => {
-    const getSavedLoginFormData = async () => {
-      const loginEmail = await getValueFromSecureStoreFor("login_email");
-      const loginPassword = await getValueFromSecureStoreFor("login_password");
-
-      if (loginEmail) setValue("email", loginEmail);
-      if (loginPassword) setValue("password", loginPassword);
-    };
-
-    getSavedLoginFormData();
-  }, []);
-
-  const setAuthenticatedUser = useAuthStore(
-    (state) => state.setAuthenticatedUser
-  );
-
-  const { t } = useTranslation();
-
+  // Form setup with react-hook-form and zod validation
   const {
     control,
     handleSubmit,
@@ -86,57 +77,58 @@ export default function Login() {
     resolver: zodResolver(LoginSchema(t)),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    const { rememberUser } = data;
+  // Load saved credentials from SecureStore
+  useEffect(() => {
+    const getSavedLoginFormData = async () => {
+      try {
+        const loginEmail = await getValueFromSecureStoreFor("login_email");
+        const loginPassword = await getValueFromSecureStoreFor("login_password");
 
+        if (loginEmail) setValue("email", loginEmail);
+        if (loginPassword) setValue("password", loginPassword);
+      } catch (error) {
+        console.error("Failed to load saved credentials:", error);
+        toast.error(t("somethingWentWrong"));
+      }
+    };
+
+    getSavedLoginFormData();
+  }, [setValue, t]);
+
+  // Handle form submission
+  const onSubmit = async (data: LoginFormData) => {
     console.log("🚀 ~ onSubmit ~ data:", data);
-    mutation
-      .mutateAsync(data)
-      .then(() => {
+    const { email, password, rememberUser } = data;
+
+    // Simulate login with hardcoded credentials
+    const isValidLogin = email === "test1234@test.test" && password === "test1234";
+
+    if (isValidLogin) {
+      try {
+        // Update auth state
+        setAuthenticatedUser(true, 1); // Hardcoded userId for testing
+        // Save credentials if rememberUser is checked
         if (rememberUser) {
-          saveItemInSecureStore("login_email", data.email);
-          saveItemInSecureStore("login_password", data.password);
+          await saveItemInSecureStore("login_email", email);
+          await saveItemInSecureStore("login_password", password);
         }
-      })
-      .catch((error: Error | AxiosError) => {
-        console.log("🚀 ~ mutation.mutateAsync ~ error:", error);
-        if (isAxiosError(error)) {
-          if (error.response?.data.message) {
-            toast.error(error.response?.data.message);
-            return;
-          }
-          toast.error(t("somethingWentWrong") + error);
-        } else {
-          toast.error(t("somethingWentWrong"));
-        }
-      });
+        // Navigate to tabs
+        console.log("Navigating to /(auth)/(tabs)");
+        router.replace("/(auth)/(tabs)");
+        toast.success(t("loginSuccess"));
+      } catch (error) {
+        console.error("Error during login:", error);
+        toast.error(t("somethingWentWrong"));
+      }
+    } else {
+      toast.error(t("invalidCredentials"));
+    }
   };
 
+  // Log form errors for debugging
   console.log("🚀 ~ Login ~ errors:", errors);
 
-  const theme = useAppTheme();
-
-  const mutation = useMutation({
-    mutationFn: (formData: LoginFormData) => {
-      return api.post(endpoints.public.login, {
-        email: formData.email,
-        password: formData.password,
-      });
-    },
-    onSuccess: async (response) => {
-      console.log("🚀 ~ Login ~ response:", response);
-      const { refreshToken, accessToken } = response.data;
-
-      await saveItemInSecureStore("access_token", accessToken);
-      await saveItemInSecureStore("refresh_token", refreshToken);
-
-      const decoded = jwtDecode(accessToken);
-      console.log("🚀 ~ onSuccess: ~ decoded:", decoded);
-      setAuthenticatedUser(true, Number(decoded.sub));
-    },
-  });
-
-  const { isKeyboardOpen } = useKeyboardState();
+  // Animated style for logo container
   const animatedStyle = useAnimatedStyle(() => ({
     height: withTiming(isKeyboardOpen ? 0 : 150, { duration: 250 }),
     opacity: withTiming(isKeyboardOpen ? 0 : 1, { duration: 250 }),
@@ -157,7 +149,7 @@ export default function Login() {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
               <Animated.View
-                key={"uniqueKey"}
+                key="uniqueKey"
                 style={[styles.animationContainer, animatedStyle]}
               >
                 <Image
@@ -180,9 +172,7 @@ export default function Login() {
               </Text>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
+                rules={{ required: true }}
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <Animated.View
                     entering={FadeIn.duration(500)}
@@ -202,21 +192,18 @@ export default function Login() {
                       autoCapitalize="none"
                       keyboardType="email-address"
                     />
-                    {errors.email ? (
+                    {errors.email && (
                       <HelperText type="error" visible={!!errors.email}>
                         {errors.email.message}
                       </HelperText>
-                    ) : null}
+                    )}
                   </Animated.View>
                 )}
                 name="email"
               />
-
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
+                rules={{ required: true }}
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <Animated.View
                     entering={FadeIn.duration(750)}
@@ -237,16 +224,15 @@ export default function Login() {
                       secureTextEntry={true}
                       keyboardType="visible-password"
                     />
-                    {errors.password ? (
+                    {errors.password && (
                       <HelperText type="error" visible={!!errors.password}>
                         {errors.password.message}
                       </HelperText>
-                    ) : null}
+                    )}
                   </Animated.View>
                 )}
                 name="password"
               />
-
               <Animated.View
                 entering={FadeIn.duration(850)}
                 exiting={FadeOut.duration(850)}
@@ -260,45 +246,35 @@ export default function Login() {
               >
                 <Controller
                   control={control}
-                  rules={{
-                    required: true,
-                  }}
-                  render={({ field: { onChange, value } }) => {
-                    console.log("checkbox value", value);
-                    return (
-                      <Animated.View
-                        entering={FadeIn.duration(750)}
-                        exiting={FadeOut.duration(750)}
+                  render={({ field: { onChange, value } }) => (
+                    <Animated.View
+                      entering={FadeIn.duration(750)}
+                      exiting={FadeOut.duration(750)}
+                    >
+                      <TouchableOpacity
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flexDirection: "row",
+                        }}
+                        onPress={() => onChange(!value)}
+                        activeOpacity={0.7}
                       >
-                        <TouchableOpacity
-                          style={{
-                            justifyContent: "center",
-                            alignItems: "center",
-                            flexDirection: "row",
-                          }}
+                        <Checkbox.Android
+                          status={value ? "checked" : "unchecked"}
                           onPress={() => onChange(!value)}
-                          activeOpacity={0.7}
-                        >
-                          <Checkbox.Android
-                            status={value ? "checked" : "unchecked"}
-                            onPress={() => onChange(!value)}
-                          />
-                          <ThemedText>{t("saveLoginData")}</ThemedText>
-                        </TouchableOpacity>
-                        {errors.rememberUser ? (
-                          <HelperText
-                            type="error"
-                            visible={!!errors.rememberUser}
-                          >
-                            {errors.rememberUser.message}
-                          </HelperText>
-                        ) : null}
-                      </Animated.View>
-                    );
-                  }}
+                        />
+                        <ThemedText>{t("saveLoginData")}</ThemedText>
+                      </TouchableOpacity>
+                      {errors.rememberUser && (
+                        <HelperText type="error" visible={!!errors.rememberUser}>
+                          {errors.rememberUser.message}
+                        </HelperText>
+                      )}
+                    </Animated.View>
+                  )}
                   name="rememberUser"
                 />
-
                 <Button
                   mode="outlined"
                   disabled={isSubmitting}
@@ -308,9 +284,7 @@ export default function Login() {
                     isErrorsObjectEmpty(errors) ? undefined : theme.colors.error
                   }
                   textColor={
-                    isErrorsObjectEmpty(errors)
-                      ? undefined
-                      : theme.colors.onError
+                    isErrorsObjectEmpty(errors) ? undefined : theme.colors.onError
                   }
                   style={{
                     borderColor: isErrorsObjectEmpty(errors)

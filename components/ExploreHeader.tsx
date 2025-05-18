@@ -1,232 +1,103 @@
-import {
-  FlatList,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useRef, useState } from "react";
-import { ThemedView } from "./ThemedView";
-import { Icon, IconButton, Text } from "react-native-paper";
-import { Link } from "expo-router";
-import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { MotiView } from "moti";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Ionicons } from '@expo/vector-icons';
 
-const categories = [
-  {
-    id: 1,
-    name: "Dog",
-    icon: "dog",
-  },
-  {
-    id: 2,
-    name: "Cat",
-    icon: "cat",
-  },
-  {
-    id: 3,
-    name: "Rabbit",
-    icon: "ab-testing",
-  },
-  {
-    id: 4,
-    name: "Horse",
-    icon: "ab-testing",
-  },
-  {
-    id: 5,
-    name: "Bird",
-    icon: "ab-testing",
-  },
-  {
-    id: 6,
-    name: "Other",
-    icon: "ab-testing",
-  },
-  {
-    id: 7,
-    name: "Other2",
-    icon: "ab-testing",
-  },
-  {
-    id: 8,
-    name: "Other3",
-    icon: "ab-testing",
-  },
-];
-
-type Props = {
+interface ExploreHeaderProps {
   onCategoryChanged: (category: string) => void;
-};
+}
 
-const SPACING = 10;
+export const ExploreHeader: React.FC<ExploreHeaderProps> = ({ onCategoryChanged }) => {
+  const colorScheme = useColorScheme();
+  const [activeCategory, setActiveCategory] = useState<string>('All');
 
-export function ExploreHeader({ onCategoryChanged }: Props) {
-  const theme = useAppTheme();
+  const categories = ['All', 'Dog', 'Cat', 'Bird', 'Other'];
 
-  const flatListRef = useRef<FlatList>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const selectCategory = (index: number) => {
-    flatListRef.current?.scrollToIndex({
-      index,
-      animated: true,
-      viewOffset: SPACING,
-      viewPosition: 0.5,
-    });
-    setActiveIndex(index);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onCategoryChanged(categories[index].name);
+  const handleCategoryPress = (category: string) => {
+    setActiveCategory(category);
+    onCategoryChanged(category);
   };
 
   return (
-    <ThemedView>
-      <SafeAreaView edges={["left", "top", "right"]}>
-        <View style={styles.container}>
-          <View style={styles.actionRow}>
-            <Link
-              href={"/(auth)/(tabs)/explore"}
-              asChild
-              style={[styles.searchBtn, { borderColor: theme.colors.outline }]}
-            >
-              <TouchableOpacity
-                onPress={() =>
-                  console.log(
-                    "todo: go to modal view where you can hit a google location api"
-                  )
-                }
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    alignItems: "center",
-                    marginLeft: 16,
-                  }}
-                >
-                  <Icon size={24} source="magnify" />
-                  <View>
-                    <Text style={{ fontWeight: "600" }}>Search</Text>
-                    <Text
-                      style={{ color: theme.colors.secondary, fontSize: 13 }}
-                    >
-                      Places · Locations
-                    </Text>
-                  </View>
-                </View>
-                <IconButton
-                  icon={({ color }) => (
-                    <Ionicons name="options-outline" color={color} size={24} />
-                  )}
-                  size={24}
-                  onPress={() => console.log("Pressed")}
-                />
-              </TouchableOpacity>
-            </Link>
-          </View>
-          <FlatList
-            ref={flatListRef}
-            showsHorizontalScrollIndicator={false}
-            initialScrollIndex={activeIndex}
-            style={{ flexGrow: 0 }}
-            contentContainerStyle={{
-              gap: 30,
-              paddingHorizontal: 16,
-              paddingBottom: Platform.OS === "android" ? 10 : 0,
-            }}
-            data={categories}
-            keyExtractor={(item) => item.name}
-            horizontal
-            renderItem={({ item, index: fIndex }) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => selectCategory(fIndex)}
-                  style={
-                    activeIndex === fIndex
-                      ? {
-                          ...styles.categoriesBtnActive,
-                          borderBottomColor: theme.colors.primary,
-                        }
-                      : styles.categoriesBtn
-                  }
-                >
-                  <MotiView
-                    animate={{
-                      opacity: activeIndex === fIndex ? 1 : 0.6,
-                    }}
-                    transition={{ duration: 300 }}
-                    style={{
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Icon
-                      source={item.icon}
-                      size={24}
-                      color={
-                        activeIndex === fIndex
-                          ? theme.colors.primary
-                          : undefined
-                      }
-                    />
-                    <Text
-                      variant="labelLarge"
-                      style={{
-                        color:
-                          activeIndex === fIndex
-                            ? theme.colors.primary
-                            : theme.colors.onSurface,
-                        fontWeight: "600",
-                      }}
-                    >
-                      {item.name}
-                    </Text>
-                  </MotiView>
-                </TouchableOpacity>
-              );
-            }}
-          />
+    <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+      <View style={styles.headerContainer}>
+        <View style={styles.titleContainer}>
+          <Ionicons name="paw" size={24} color={Colors[colorScheme ?? 'light'].tint} />
+          <Text style={[styles.title, { color: Colors[colorScheme ?? 'light'].text }]}>
+            Pet Categories
+          </Text>
         </View>
-      </SafeAreaView>
-    </ThemedView>
+      </View>
+      
+      <View style={styles.categoriesContainer}>
+        {categories.map((category) => (
+          <TouchableOpacity
+            key={category}
+            style={[
+              styles.categoryButton,
+              activeCategory === category
+                ? { backgroundColor: Colors[colorScheme ?? 'light'].tint }
+                : { backgroundColor: '#FFFFFF' },
+            ]}
+            onPress={() => handleCategoryPress(category)}
+          >
+            <Text
+              style={[
+                styles.categoryText,
+                {
+                  color:
+                    activeCategory === category
+                      ? '#FFFFFF'
+                      : '#007AFF',
+                },
+              ]}
+            >
+              {category}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: Platform.OS === "android" ? 0 : 2,
-    paddingTop: Platform.OS === "android" ? 2 : 0,
+    paddingTop: 50,  // Adjust based on your app's status bar height
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  actionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 18,
-    paddingBottom: 16,
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 15,
   },
-  searchBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-    flex: 1,
-    justifyContent: "space-between",
-    borderRadius: 24,
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  categoriesBtn: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 8,
+  title: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginLeft: 8,
   },
-  categoriesBtnActive: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 8,
-    borderBottomWidth: 2,
+  categoriesContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  categoryButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
