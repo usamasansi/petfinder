@@ -32,7 +32,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppTheme } from "@/lib/theme/Material3ThemeProvider";
 import { isErrorsObjectEmpty } from "@/validation/helpers";
-import { LoginFormData, LoginSchema } from "@/validation/login";
+import { SignUpFormData, SignUpSchema } from "@/validation/signup";
 import {
   blurhash,
   getValueFromSecureStoreFor,
@@ -45,7 +45,7 @@ import useKeyboardState from "@/hooks/useKeyboardState";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-export default function Login() {
+export default function SignUp() {
   const { authenticated, userId, loading } = useAuthStore((state) => state.authState);
   const setAuthenticatedUser = useAuthStore((state) => state.setAuthenticatedUser);
   const router = useRouter();
@@ -56,8 +56,8 @@ export default function Login() {
 
   if (loading) return null;
 
-  console.log("🚀 ~ Login ~ userId:", userId);
-  console.log("🚀 ~ Login ~ authenticated:", authenticated);
+  console.log("🚀 ~ SignUp ~ userId:", userId);
+  console.log("🚀 ~ SignUp ~ authenticated:", authenticated);
 
   useCheckAuthentication(authenticated);
 
@@ -67,58 +67,63 @@ export default function Login() {
     setFocus,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  } = useForm<SignUpFormData>({
     defaultValues: {
       email: "",
+      username: "",
       password: "",
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
       rememberUser: false,
     },
-    resolver: zodResolver(LoginSchema(t)),
+    resolver: zodResolver(SignUpSchema(t)),
   });
 
   useEffect(() => {
-    const getSavedLoginFormData = async () => {
+    const getSavedSignUpFormData = async () => {
       try {
-        const loginEmail = await getValueFromSecureStoreFor("login_email");
-        const loginPassword = await getValueFromSecureStoreFor("login_password");
+        const signUpEmail = await getValueFromSecureStoreFor("signup_email");
+        const signUpPassword = await getValueFromSecureStoreFor("signup_password");
 
-        if (loginEmail) setValue("email", loginEmail);
-        if (loginPassword) setValue("password", loginPassword);
+        if (signUpEmail) setValue("email", signUpEmail);
+        if (signUpPassword) setValue("password", signUpPassword);
       } catch (error) {
         console.error("Failed to load saved credentials:", error);
         toast.error(t("somethingWentWrong"));
       }
     };
 
-    getSavedLoginFormData();
+    getSavedSignUpFormData();
   }, [setValue, t]);
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: SignUpFormData) => {
     console.log("🚀 ~ onSubmit ~ data:", data);
     const { email, password, rememberUser } = data;
 
-    const isValidLogin = email === "test1234@test.test" && password === "test1234";
+    // Simulate registration with hardcoded credentials
+    const isValidSignUp = email === "signup@test.test" && password === "signup1234";
 
-    if (isValidLogin) {
+    if (isValidSignUp) {
       try {
-        setAuthenticatedUser(true, 1);
+        setAuthenticatedUser(true, 2); // Hardcoded userId for testing
         if (rememberUser) {
-          await saveItemInSecureStore("login_email", email);
-          await saveItemInSecureStore("login_password", password);
+          await saveItemInSecureStore("signup_email", email);
+          await saveItemInSecureStore("signup_password", password);
         }
         console.log("Navigating to /(auth)/(tabs)");
         router.replace("/(auth)/(tabs)");
-        toast.success(t("loginSuccess"));
+        toast.success(t("signUpSuccess"));
       } catch (error) {
-        console.error("Error during login:", error);
+        console.error("Error during signup:", error);
         toast.error(t("somethingWentWrong"));
       }
     } else {
-      toast.error(t("invalidCredentials"));
+      toast.error(t("invalidSignUpCredentials"));
     }
   };
 
-  console.log("🚀 ~ Login ~ errors:", errors);
+  console.log("🚀 ~ SignUp ~ errors:", errors);
 
   const animatedStyle = useAnimatedStyle(() => ({
     height: withTiming(isKeyboardOpen ? 0 : 150, { duration: 250 }),
@@ -178,7 +183,7 @@ export default function Login() {
                       value={value}
                       mode="outlined"
                       error={!!errors.email}
-                      onSubmitEditing={() => setFocus("password")}
+                      onSubmitEditing={() => setFocus("username")}
                       ref={ref}
                       returnKeyType="next"
                       autoCapitalize="none"
@@ -199,8 +204,39 @@ export default function Login() {
                 rules={{ required: true }}
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <Animated.View
-                    entering={FadeIn.duration(750)}
-                    exiting={FadeOut.duration(750)}
+                    entering={FadeIn.duration(550)}
+                    exiting={FadeOut.duration(550)}
+                    style={{ marginBottom: 10 }}
+                  >
+                    <TextInput
+                      label={t("username")}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      mode="outlined"
+                      error={!!errors.username}
+                      onSubmitEditing={() => setFocus("password")}
+                      ref={ref}
+                      returnKeyType="next"
+                      autoCapitalize="none"
+                      theme={{ colors: { text: Colors[colorScheme ?? 'light'].text, background: Colors[colorScheme ?? 'light'].card } }}
+                    />
+                    {errors.username && (
+                      <HelperText type="error" visible={!!errors.username}>
+                        {errors.username.message}
+                      </HelperText>
+                    )}
+                  </Animated.View>
+                )}
+                name="username"
+              />
+              <Controller
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Animated.View
+                    entering={FadeIn.duration(600)}
+                    exiting={FadeOut.duration(600)}
                     style={{ marginBottom: 10 }}
                   >
                     <TextInput
@@ -210,9 +246,9 @@ export default function Login() {
                       value={value}
                       mode="outlined"
                       error={!!errors.password}
-                      onSubmitEditing={handleSubmit(onSubmit)}
+                      onSubmitEditing={() => setFocus("firstName")}
                       ref={ref}
-                      returnKeyType="done"
+                      returnKeyType="next"
                       autoCapitalize="none"
                       secureTextEntry={true}
                       keyboardType="visible-password"
@@ -226,6 +262,99 @@ export default function Login() {
                   </Animated.View>
                 )}
                 name="password"
+              />
+              <Controller
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Animated.View
+                    entering={FadeIn.duration(650)}
+                    exiting={FadeOut.duration(650)}
+                    style={{ marginBottom: 10 }}
+                  >
+                    <TextInput
+                      label={t("firstName")}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      mode="outlined"
+                      error={!!errors.firstName}
+                      onSubmitEditing={() => setFocus("lastName")}
+                      ref={ref}
+                      returnKeyType="next"
+                      autoCapitalize="words"
+                      theme={{ colors: { text: Colors[colorScheme ?? 'light'].text, background: Colors[colorScheme ?? 'light'].card } }}
+                    />
+                    {errors.firstName && (
+                      <HelperText type="error" visible={!!errors.firstName}>
+                        {errors.firstName.message}
+                      </HelperText>
+                    )}
+                  </Animated.View>
+                )}
+                name="firstName"
+              />
+              <Controller
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Animated.View
+                    entering={FadeIn.duration(700)}
+                    exiting={FadeOut.duration(700)}
+                    style={{ marginBottom: 10 }}
+                  >
+                    <TextInput
+                      label={t("lastName")}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      mode="outlined"
+                      error={!!errors.lastName}
+                      onSubmitEditing={() => setFocus("phoneNumber")}
+                      ref={ref}
+                      returnKeyType="next"
+                      autoCapitalize="words"
+                      theme={{ colors: { text: Colors[colorScheme ?? 'light'].text, background: Colors[colorScheme ?? 'light'].card } }}
+                    />
+                    {errors.lastName && (
+                      <HelperText type="error" visible={!!errors.lastName}>
+                        {errors.lastName.message}
+                      </HelperText>
+                    )}
+                  </Animated.View>
+                )}
+                name="lastName"
+              />
+              <Controller
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Animated.View
+                    entering={FadeIn.duration(750)}
+                    exiting={FadeOut.duration(750)}
+                    style={{ marginBottom: 10 }}
+                  >
+                    <TextInput
+                      label={t("phoneNumber")}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      mode="outlined"
+                      error={!!errors.phoneNumber}
+                      onSubmitEditing={handleSubmit(onSubmit)}
+                      ref={ref}
+                      returnKeyType="done"
+                      keyboardType="phone-pad"
+                      theme={{ colors: { text: Colors[colorScheme ?? 'light'].text, background: Colors[colorScheme ?? 'light'].card } }}
+                    />
+                    {errors.phoneNumber && (
+                      <HelperText type="error" visible={!!errors.phoneNumber}>
+                        {errors.phoneNumber.message}
+                      </HelperText>
+                    )}
+                  </Animated.View>
+                )}
+                name="phoneNumber"
               />
               <Animated.View
                 entering={FadeIn.duration(850)}
@@ -289,10 +418,10 @@ export default function Login() {
                       : theme.colors.onError,
                   }}
                 >
-                  {t("login")}
+                  {t("signUp")}
                 </Button>
               </Animated.View>
-              <Link href="/(public)/signin" asChild>
+              <Link href="/(public)/login" asChild>
                 <TouchableOpacity>
                   <ThemedText
                     style={{
@@ -302,15 +431,15 @@ export default function Login() {
                       textDecorationLine: "underline",
                     }}
                   >
-                    {t("signUp")}
+                    {t("loginLink")}
                   </ThemedText>
                 </TouchableOpacity>
               </Link>
               <ThemedText style={{ color: Colors[colorScheme ?? 'light'].text, textAlign: "center", marginTop: 10 }}>
-                test1234@test.test
+                signup@test.test
               </ThemedText>
               <ThemedText style={{ color: Colors[colorScheme ?? 'light'].text, textAlign: "center" }}>
-                test1234
+                signup1234
               </ThemedText>
             </View>
           </TouchableWithoutFeedback>

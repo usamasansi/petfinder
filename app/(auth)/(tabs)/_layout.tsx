@@ -64,16 +64,11 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="Messages"
+    <Tabs.Screen
+        name="AI Recognition"
         options={{
-          title: 'Messages',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'chatbox' : 'chatbox-outline'}
-              color={color}
-            />
-          ),
+          title: "AI",
+          tabBarIcon: ({ color }) => <TabBarIcon name="sparkles" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -100,18 +95,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="adoption"
-        options={{
-          title: 'Adoption',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'heart' : 'heart-outline'}
-              color={color}
-            />
-          ),
-        }}
-      />
+    
       <Tabs.Screen
         name="edit-profile"
         options={{
@@ -120,6 +104,79 @@ export default function TabLayout() {
           headerShown: true,
         }}
       />
+      <Tabs.Screen
+        name="pet-list"
+        options={{
+          title: 'Lost & Found Pets',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
+      <Tabs.Screen
+        name="report-lost-pet"
+        options={{
+          title: 'Report Lost Pet',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
+      <Tabs.Screen
+        name="adoption"
+        options={{
+          title: 'Report Lost Pet',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
+      <Tabs.Screen
+        name="list-pet"
+        options={{
+          title: 'Report Lost Pet',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
+      <Tabs.Screen
+        name="available-pets"
+        options={{
+          title: 'Report Lost Pet',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
+        <Tabs.Screen
+        name="pet-store"
+        options={{
+          title: 'Pet Store',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
+      <Tabs.Screen
+        name="educational-resources"
+        options={{
+          title: 'Educational Resources',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
+       <Tabs.Screen
+        name="signin"
+        options={{
+          title: '',
+          href: null, // Hide from tab bar
+          headerShown: false,
+        }}
+      />
+       <Tabs.Screen
+        name="social-media"
+        options={{
+          title: 'Social Media',
+          href: null, // Hide from tab bar
+          headerShown: true,
+        }}
+      />
     </Tabs>
+    
   );
 }

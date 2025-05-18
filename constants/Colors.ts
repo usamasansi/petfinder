@@ -31,6 +31,7 @@ export const Colors = {
       cart: '#FFD740', // Lighter Yellow
       'share-social': '#9CA3AF', // Lighter Gray
       camera: '#BB77D6', // Lighter Purple
+      book: '#FFB74D', // Lighter Orange for educational resources
     },
   },
 };

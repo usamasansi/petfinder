@@ -100,6 +100,13 @@ export default function RootLayout() {
                     title: "Login",
                   }}
                 />
+                 <Stack.Screen
+                  name="(public)/signin"
+                  options={{
+                    headerShown: true,
+                    title: "Sign In",
+                  }}
+                />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <Toasts />

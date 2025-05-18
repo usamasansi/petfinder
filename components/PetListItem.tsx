@@ -13,16 +13,18 @@ interface Pet {
 interface PetListItemProps {
   pet: Pet;
   onPress: (pet: Pet) => void;
+  theme?: 'light' | 'dark';
 }
 
-const PetListItem: React.FC<PetListItemProps> = ({ pet, onPress }) => {
+const PetListItem: React.FC<PetListItemProps> = ({ pet, onPress, theme = 'dark' }) => {
+  const isDark = theme === 'dark';
   return (
-    <TouchableOpacity style={styles.container} onPress={() => onPress(pet)}>
+    <TouchableOpacity style={[styles.container, isDark && styles.containerDark]} onPress={() => onPress(pet)}>
       {pet.image && <Image source={{ uri: pet.image }} style={styles.image} />}
       <View style={styles.info}>
-        <Text style={styles.name}>{pet.name}</Text>
-        <Text style={styles.details}>{pet.species} - {pet.breed}</Text>
-        <Text style={[styles.status, pet.status === 'lost' ? styles.lost : styles.found]}>
+        <Text style={[styles.name, isDark && styles.textDark]}>{pet.name}</Text>
+        <Text style={[styles.details, isDark && styles.textDark]}> {pet.species} - {pet.breed}</Text>
+        <Text style={[styles.status, pet.status === 'lost' ? styles.lost : styles.found, isDark && styles.statusDark]}>          
           {pet.status.toUpperCase()}
         </Text>
       </View>
@@ -41,6 +43,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     marginHorizontal: 10,
   },
+  containerDark: {
+    backgroundColor: 'dark-gray',
+    borderBottomColor: '#333',
+  },
   image: {
     width: 60,
     height: 60,
@@ -55,6 +61,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#111',
   },
   details: {
     fontSize: 14,
@@ -70,6 +77,12 @@ const styles = StyleSheet.create({
   },
   found: {
     color: '#34C759',
+  },
+  textDark: {
+    color: '#fff',
+  },
+  statusDark: {
+    opacity: 0.8,
   },
 });
 
