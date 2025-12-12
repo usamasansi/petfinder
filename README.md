@@ -1,50 +1,233 @@
-# Welcome to your Expo app 👋
+🐾 PetFinder – Lost Pet Identification & User Profile System
+FastAPI + Flask AI Model + Expo (React Native) + MySQL (XAMPP)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+PetFinder is a full-stack project designed to help users:
 
-## Get started
+Create and update profiles
 
-1. Install dependencies
+Report lost pets
 
-   ```bash
-   npm install
-   ```
+Upload pet photos
 
-2. Start the app
+Use AI-based image similarity to recognize pets
 
-   ```bash
-    npx expo start
-   ```
+Search for matches using a custom Flask ML model
 
-In the output, you'll find options to open the app in a
+This README provides complete setup instructions.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+🚀 Project Structure
+petfinder/
+│── backend/
+│   ├── main.py (FastAPI)
+│   ├── models.py
+│   ├── schemas.py
+│   ├── database.py
+│   ├── requirements.txt
+│── ai/
+│   ├── app.py (Flask AI API)
+│   ├── embeddings/
+│       ├── pet_1.npy
+│       ├── pet_2.npy
+│── petfrontend/
+│   ├── App.js
+│   ├── screens/
+│   ├── components/
+│   ├── package.json
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+🧠 AI PET RECOGNITION API (Flask)
 
-## Get a fresh project
+This service compares a user-uploaded pet photo with known encodings and returns the top matches.
 
-When you're ready, run:
+🔍 How it works
 
-```bash
-npm run reset-project
-```
+User uploads image (multipart/form-data)
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Flask receives image → converts to NumPy → extracts features
 
-## Learn more
+Compares against stored .npy embeddings
 
-To learn more about developing your project with Expo, look at the following resources:
+Returns top 3 similar pets
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+✔ Flask AI Code (app.py)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import cv2
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
-## Join the community
+app = Flask(__name__)
+CORS(app)
 
-Join our community of developers creating universal apps.
+known_encodings = {
+    "pet_1": np.load("embeddings/pet_1.npy"),
+    "pet_2": np.load("embeddings/pet_2.npy"),
+}
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+def extract_features(image_bytes):
+    nparr = np.frombuffer(image_bytes, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    img_resized = cv2.resize(img, (128, 128)) / 255.0
+    return img_resized.flatten().reshape(1, -1)
+
+@app.post("/match-pet")
+def match_pet():
+    if "image" not in request.files:
+        return jsonify({"error": "Image required"}), 400
+
+    img = request.files["image"].read()
+    input_feat = extract_features(img)
+
+    scores = {}
+    for name, known in known_encodings.items():
+        sim = cosine_similarity(input_feat, known.reshape(1, -1))[0][0]
+        scores[name] = float(sim)
+
+    matches = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+
+    return {"matches": matches[:3]}
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+▶ Run the AI server
+cd ai
+pip install -r requirements.txt
+python app.py
+
+
+AI runs on:
+
+http://127.0.0.1:5000/match-pet
+
+🐍 FASTAPI BACKEND (MAIN APP)
+
+Handles:
+
+User Profiles (CRUD)
+
+Lost & Found Pets
+
+Authentication (optional)
+
+SQL Database via XAMPP MariaDB
+
+✔ Profile Update Endpoint
+@app.put("/profiles/{user_id}", response_model=schemas.ProfileUpdate)
+def update_user(user_id: int, user: schemas.ProfileUpdate, db: Session = Depends(get_db)):
+    db_user = db.query(models.Profile).filter(models.Profile.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    update_data = user.dict(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_user, key, value)
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+🗄 SQL DATABASE (XAMPP MARIADB)
+✔ Create Profiles Table
+CREATE TABLE profiles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) UNIQUE,
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  phone_number VARCHAR(255),
+  email VARCHAR(255) UNIQUE,
+  photo_url TEXT
+);
+
+✔ Create Lost Pets Table (FK → pet_id)
+CREATE TABLE pets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
+  type VARCHAR(255),
+  color VARCHAR(255),
+  photo_url TEXT
+);
+
+CREATE TABLE lost_pets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pet_id INT,
+  location VARCHAR(255),
+  description TEXT,
+  FOREIGN KEY (pet_id) REFERENCES pets(id)
+);
+
+📱 EXPO FRONTEND (REACT NATIVE)
+
+Handles:
+
+Profile screen
+
+Update user info
+
+Pick/upload pet images
+
+Call Flask AI match endpoint
+
+✔ Upload image to AI API
+const formData = new FormData();
+formData.append("image", {
+  uri: photoUri,
+  name: "pet.jpg",
+  type: "image/jpeg",
+});
+
+const res = await fetch("http://127.0.0.1:5000/match-pet", {
+  method: "POST",
+  body: formData,
+  headers: {
+    "Content-Type": "multipart/form-data"
+  }
+});
+
+const data = await res.json();
+console.log("AI Result:", data);
+
+🧪 TESTING WITH POSTMAN
+✔ Update profile
+PUT http://127.0.0.1:8000/profiles/1
+
+
+JSON Body:
+
+{
+  "first_name": "John",
+  "phone_number": "99999999"
+}
+
+✔ AI Testing (image upload)
+
+Use POST → form-data
+Key: image → Type: file
+Select a pet photo.
+
+🛠 Running the Entire Project
+1️⃣ Start Backend (FastAPI)
+cd backend
+uvicorn main:app --reload
+
+2️⃣ Start AI Server (Flask)
+cd ai
+python app.py
+
+3️⃣ Start Expo App
+cd petfrontend
+npm start
+
+🎯 Final Recommendations (Best Practice)
+
+✔ Keep AI model separate (Flask microservice)
+✔ Use MySQL (XAMPP) for database
+✔ Use Expo for mobile
+✔ Store real pet embeddings from CNN models later
+✔ Deploy using:
+
+FastAPI → Render / Railway
+
+Flask AI → Docker
+
+Expo → EAS
