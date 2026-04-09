@@ -47,4 +47,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     typedRoutes: true,
   },
   newArchEnabled: true,
+
+  // ✅ THIS IS THE REQUIRED BLOCK FOR EAS
+  extra: {
+    ...config.extra,
+    eas: {
+      projectId: "67c2a956-49a8-42e7-a6d8-f5a88cdbd610",
+    },
+  },
 });

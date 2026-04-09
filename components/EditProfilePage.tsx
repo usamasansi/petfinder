@@ -5,6 +5,7 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
+import { Alert } from 'react-native';
 
 export default function EditProfilePage() {
   const colorScheme = useColorScheme() as 'light' | 'dark';
@@ -50,9 +51,21 @@ export default function EditProfilePage() {
     }).start();
   };
 
-  const handleSave = () => {
-    router.back();
-  };
+  
+const handleSave = () => {
+  Alert.alert(
+    'Profile Saved',
+    'Your changes have been saved successfully.',
+    [
+      {
+        text: 'OK',
+        onPress: () => router.back(),
+      },
+    ],
+    { cancelable: false }
+  );
+};
+
 
   const handleCancel = () => {
     router.back();

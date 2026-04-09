@@ -459,6 +459,6 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 150,
-    height: 150,
-  },
+    height: 150,
+  },
 });
